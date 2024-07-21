@@ -1,0 +1,370 @@
+./
+    .gitignore
+    app.py
+    groqFunctions.py
+    prompts.py
+    requirements.txt
+    youtube_transcript.py
+    .python-version
+    startup.sh
+    groq_api_key
+    paperwork.py
+    youtube.py
+    output.txt
+    .git/
+        description
+        packed-refs
+        HEAD
+        config
+        FETCH_HEAD
+        ORIG_HEAD
+        index
+        branches/
+        hooks/
+            applypatch-msg.sample
+            commit-msg.sample
+            post-update.sample
+            pre-applypatch.sample
+            pre-commit.sample
+            pre-merge-commit.sample
+            pre-push.sample
+            pre-receive.sample
+            push-to-checkout.sample
+            sendemail-validate.sample
+            update.sample
+            fsmonitor-watchman.sample
+            pre-rebase.sample
+            prepare-commit-msg.sample
+        info/
+            exclude
+        objects/
+            pack/
+                pack-89051c27545ea43b065761691aed0d71e49fa627.pack
+                pack-89051c27545ea43b065761691aed0d71e49fa627.rev
+                pack-89051c27545ea43b065761691aed0d71e49fa627.idx
+            info/
+            67/
+                50048179b37d8d77272ea47c62d5912a8b9102
+            0f/
+                e9e248356c3918b3b445eed4eb7e1aa8e68e27
+            25/
+                5ecddcaf4f8c4d078d131947e9ffd798be1b7a
+        refs/
+            heads/
+                main
+            tags/
+            remotes/
+                origin/
+                    HEAD
+                    main
+        logs/
+            HEAD
+            refs/
+                remotes/
+                    origin/
+                        HEAD
+                        main
+                heads/
+                    main
+    __pycache__/
+        app.cpython-311.pyc
+        youtube_transcript.cpython-311.pyc
+        groqFunctions.cpython-311.pyc
+        prompts.cpython-311.pyc
+
+### ./app.py ###
+from flask import Flask, request, jsonify
+from youtube_transcript import getTranscript, getResponse
+app = Flask(__name__)
+
+# Define a route for the home page
+@app.route('/')
+def home():
+    return "Welcome to the Flask application!"
+
+# Define a route to handle GET requests
+@app.route('/hello', methods=['GET'])
+def hello():
+    name = request.args.get('name', 'World')
+    return f'Hello, {name}!'
+
+# Define a route to handle POST requests
+@app.route('/summary', methods=['POST'])
+def echo():
+    data = request.json
+    print(data)
+    url = data['youtube_link']
+    output_type = data['output_type']
+    transcript = getTranscript(url)
+    response = getResponse(output_type, transcript)
+    return jsonify(response)
+
+# Run the Flask application
+if __name__ == '__main__':
+    app.run(debug=True)
+--- End of file: ./app.py ---
+### ./groqFunctions.py ###
+import os
+from groq import Groq
+import json
+import time
+
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+
+# def chatWithGroq(prompt, content):
+
+
+#     chat_completion = client.chat.completions.create(
+#         messages=[
+#             {
+#                 "role": "user",
+#                 "content": prompt + content,
+#             }
+#         ],
+#         model="llama3-8b-8192",
+#     )
+#     chat_output = chat_completion.choices[0].message.content
+#     print(type(chat_output))
+
+#     print(chat_output)
+
+#     start_pos = chat_output.find("{")
+#     response = json.loads(chat_output[start_pos:])
+#     print(type(response))
+#     print(response)
+    
+
+
+def chatWithGroq(prompt, content):
+    while True:
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                
+                        "role": "user",
+                        "content": prompt + content,
+                    },
+            
+                ],
+                model="llama3-8b-8192",
+            )
+            chat_output = chat_completion.choices[0].message.content
+            start_pos = chat_output.find("{")
+            response = json.loads(chat_output[start_pos:])
+            
+            return response
+        
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error occurred: {e}")
+            time.sleep(2)
+
+--- End of file: ./groqFunctions.py ---
+### ./prompts.py ###
+flashcard_prompt = '''
+Take the transcript of this educational video given and provide back a list of flashcards based on the transcript 
+as a list of dictionaries in json. The output should follow the following pattern: 
+{
+    flashcards: 
+    [
+        {
+            title: main idea as a one sentence summary,
+            details: one paragraph explaining the idea in detail
+        }
+    ]
+
+}
+Do not return back any text besides the json output
+'''
+
+
+bullet_point_prompt = '''
+Take the transcript of this educational video provided  and provide back a list of bullet points based on the transcript 
+as a list of strings in json. The bullet points should not include any personal information about indivudals in the video, 
+rather it should only describe the content trying to be explained. The output should follow the following pattern: 
+{
+    bullet_points: 
+    [
+        main idea number one in great detail,
+        main idea number two in great detail
+    ]
+}
+Do not return back any text besides the json output
+
+'''
+
+
+quick_read_prompt = '''
+You are an academic journal writer that makes content for educational use. You are using the culmination of the data provided
+to provide a quick read of 1000 words on this topic. Write the essay with the following information as context. The response will be in json. First a title is declared which will be the main topic of the paper.
+The essay should have The first paragraph should provide an overview over what the topic is. The middle paragraphs should go into detail over the main points of the context.
+The final paragraph should summarize the findings. The output should follow the following pattern:
+
+{
+    title: Topic of paper,
+    paragraphs: [paragraph1, paragraph2...]
+}
+Do not return back any text besides the json output
+'''
+
+--- End of file: ./prompts.py ---
+### ./requirements.txt ###
+agentops==0.2.6
+annotated-types==0.7.0
+anyio==4.4.0
+attrs==23.2.0
+certifi==2024.7.4
+charset-normalizer==3.3.2
+distro==1.9.0
+groq==0.9.0
+h11==0.14.0
+httpcore==1.0.5
+httpx==0.27.0
+httpx-sse==0.4.0
+idna==3.7
+multion==1.3.5
+packaging==23.2
+psutil==5.9.8
+pydantic==2.8.2
+pydantic_core==2.20.1
+referencing==0.35.1
+requests==2.31.0
+rpds-py==0.19.0
+sniffio==1.3.1
+termcolor==2.4.0
+typing_extensions==4.12.2
+urllib3==2.2.2
+youtube-transcript-api==0.6.2
+
+--- End of file: ./requirements.txt ---
+### ./youtube_transcript.py ###
+from youtube_transcript_api import YouTubeTranscriptApi
+from groqFunctions import chatWithGroq
+from prompts import flashcard_prompt, bullet_point_prompt, quick_read_prompt
+
+
+def getTranscript(url):
+    start_pos = url.find("v=") + 2
+    video_id = url[start_pos:]
+    transcript = YouTubeTranscriptApi.get_transcript(video_id)
+    audio = []
+    for i in range(len(transcript)):
+        text = transcript[i]['text']
+        modified_text = text.replace("\n", " ")
+        audio.append(modified_text)
+
+    audio_context = " ".join(audio)
+
+    return audio_context
+
+
+def getResponse(output, final_transcript):
+    if output == "flashcard":
+        response = chatWithGroq(flashcard_prompt, final_transcript)
+    elif output == "bullet_point":
+        response = chatWithGroq(bullet_point_prompt, final_transcript)
+    else:
+        response = chatWithGroq(quick_read_prompt, final_transcript)
+    return response
+
+
+
+
+--- End of file: ./youtube_transcript.py ---
+### ./.python-version ###
+friend_comp
+
+--- End of file: ./.python-version ---
+### ./startup.sh ###
+pip install virtualenv
+
+virtualenv venv
+
+source ./venv/bin/activate
+
+pip install Flask
+
+pip install -r requirements.txt
+
+flask run
+
+
+--- End of file: ./startup.sh ---
+### ./groq_api_key ###
+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
+
+--- End of file: ./groq_api_key ---
+### ./paperwork.py ###
+import os
+import requests
+import feedparser
+
+def query_arxiv(search_query, sort_by='submittedDate', sort_order='descending', max_results=5):
+    base_url = 'http://export.arxiv.org/api/query?'
+    params = {
+        'search_query': search_query,
+        'sortBy': sort_by,
+        'sortOrder': sort_order,
+        'start': 0,
+        'max_results': max_results
+    }
+    query_string = "&".join(f"{key}={value}" for key, value in params.items())
+    url = base_url + query_string
+
+    response = requests.get(url)
+    feed = feedparser.parse(response.content)
+    return feed
+
+def download_pdfs(feed, folder='downloads'):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    for entry in feed.entries:
+        link = entry.link
+        title = entry.title.replace(':', '-').replace('/', '-').replace(" ", "_")
+        pdf_url = link.replace('abs', 'pdf') + ".pdf"
+
+        response = requests.get(pdf_url)
+        if response.status_code == 200:
+            filename = os.path.join(folder, f"{title}.pdf")
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+            print(f"Downloaded: {filename}")
+        else:
+            print(f"Failed to download: {pdf_url}")
+
+def get_papers(tags, max_papers=5):
+    papers_downloaded = 0
+    for tag in tags:
+        if papers_downloaded >= max_papers:
+            break
+        
+        remaining_papers = max_papers - papers_downloaded
+        feed = query_arxiv(f'all:{tag}', max_results=remaining_papers)
+        
+        download_pdfs(feed)
+        papers_downloaded += len(feed.entries)
+
+# Usage
+tags = ['diabetes', 'glucose', 'gcm'] 
+get_papers(tags, max_papers=5)
+
+--- End of file: ./paperwork.py ---
+### ./youtube.py ###
+import requests
+
+api_key="AIzaSyAyDacalcyKd7P7XqrAMDQkefOTRTmeKHM"
+topic = "diabetes"
+youtube_url = "https://www.googleapis.com/youtube/v3/search?key={api_key}&part=snippet&type=video&q={topic}"
+
+response = requests.get(youtube_url.format(api_key=api_key, topic=topic))
+data = response.json()
+videoId = data["items"][0]["id"]["videoId"]
+
+generateURL = "https://www.youtube.com/watch?v=" + str(videoId)
+print(videoId, generateURL)
+--- End of file: ./youtube.py ---
+### ./output.txt ###
+
+--- End of file: ./output.txt ---
