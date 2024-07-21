@@ -1,1 +1,1 @@
-Frontend Repo: https://github.com/vincent38wargnier/hackathon/settings
+Frontend Repo: https://github.com/vincent38wargnier/hackathon/
