@@ -15,7 +15,6 @@ client = Groq(
 open_ai_client = OpenAI(
     api_key = os.environ.get("OPEN_AI_API_KEY")
 )
-
 def chatWithGroq(prompt, content):
     while True:
         try:

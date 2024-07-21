@@ -3,7 +3,7 @@ from youtube import process_keywords
 from paperwork import process_keywords_v2
 from flask_cors import CORS
 from groqFunctions import getKeywordsWithOpenAi
-
+from multionClient import getMultiOnResponse
 app = Flask(__name__)
 
 CORS(app)
@@ -45,6 +45,15 @@ def fetch_keywords_openai():
     overview = data["structured"]["overview"]
     response = getKeywordsWithOpenAi(overview)
     return response
+
+
+@app.route('/multion/youtube', methods=['POST'])
+def browse_youtube():
+    data = request.json
+    search_query = data['search_query']
+    response = getMultiOnResponse(search_query)
+
+    return jsonify(response)
 
 # Run the Flask application
 if __name__ == '__main__':
