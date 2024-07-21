@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from youtube import process_keywords  # Import the new function
+from youtube import process_keywords  
+from paperwork import process_keywords_v2
 from flask_cors import CORS
 from groqFunctions import getKeywordsWithOpenAi
 
@@ -21,6 +22,15 @@ def hello():
 # Define a route to handle POST requests
 @app.route('/summary', methods=['POST'])
 def echo():
+    data = request.json
+    print(data)
+    keyword = data['words']  
+    output_type = data['output_type']
+    response = process_keywords(keyword, output_type)  
+    return jsonify(response)
+
+@app.route('/summaryV2', methods=['POST'])
+def summary_v2():
     data = request.json
     print(data)
     keyword = data['words']  
