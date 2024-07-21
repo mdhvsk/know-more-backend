@@ -1,0 +1,22 @@
+{
+    "id": 75,
+    "createdAt": "2024-07-21T00:29:05.079840",
+    "transcript": "Speaker 0: update of the glass you want to do a display light just type \\n\\n Speaker 0: but that that's how that's how i learned so more or less you you you go to the to the kwin page and you just type in css what you want \\n\\n Speaker 0: yeah that it's only the environment \\n\\n Speaker 0: did you put a name in your text \\n\\n Speaker 0: yeah that's my answer what's the question i know you know if we have time to be what's your question i the conversation do you want to put it in this pandemic or we can just prove it by just taking the transcript i'll be mad if i get text file and you read directly so get the transcript that you would have used to show that that's part of our workflow and just use that as like the prompt not the context of the prompt and then the keywords from there i mean we already have the keywords set up right yeah the key the the no it's not getting keyword getting the keywords from the transcript we already have the the tool to do that right which one oh i don't think so sorry there's so many transcripts oh there the getting the keywords from the friend's transcript the friend of us no we we have another one okay i can do that you're asking about the orchestrate for okay i don't know which one's the orchestrator anymore i don't know okay yeah there is jamie and alex in your for my new scale storybook to be easier to take care about a kid you know \\n\\n Speaker 0: before i do that then i have that i have changes right now",
+    "recordingFilePath": "/var/mobile/Containers/Data/Application/E2C6EB53-561B-4DCC-B534-D0A400A88AA5/Documents/recording-20240721_002902.wav",
+    "structured": {
+        "title": "Workflow and Keyword Extraction Discussion",
+        "overview": "The conversation revolves around updating a display with CSS, handling text in the environment, and discussing the workflow for extracting keywords from transcripts. There is confusion about which tool to use for keyword extraction, and a mention of orchestrating tasks for a new scale storybook.",
+        "emoji": "ð9F§ ",
+        "category": "work",
+        "actionItems": [
+            "Speaker 0 to update the display with CSS.",
+            "Speaker 0 to handle text in the environment.",
+            "Speaker 0 to use the transcript as a prompt for keyword extraction.",
+            "Speaker 0 to identify the correct tool for keyword extraction.",
+            "Speaker 0 to orchestrate tasks for the new scale storybook."
+        ],
+        "events": []
+    },
+    "pluginsResponse": [],
+    "discarded": false
+}
