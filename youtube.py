@@ -22,37 +22,45 @@ def get_transcript(video_id):
         return ""
 
 def get_transcripts_for_keyword(keyword):
-    video_ids = search_youtube_videos(keyword)
-    if len(video_ids) > 1 : 
-        video_ids.replace(" ", "+")
-    transcripts = {}
-#TDDO : Add a list a of keywords to search for instead of just one. 
-    
-    for video_id in video_ids:
-        video_url = f"https://www.youtube.com/watch?v={video_id}"
-        transcript = get_transcript(video_id)
-        transcripts[video_url] = transcript
-    
-    return transcripts
+    video_ids = search_youtube_videos(keyword, max_results=1)
+    if video_ids:
+        video_id = video_ids[0]
+        return get_transcript(video_id)
+    return ""
 
-def getResponse(output, final_transcript):
+def process_keywords(keywords, output_type):
+    all_responses = []
+    for keyword in keywords:
+        transcript = get_transcript_for_keyword(keyword)
+        response = getResponse(output_type, transcript)
+        all_responses.append({"keyword": keyword, "response": response})
+    return all_responses
+
+def get_transcript_for_keyword(keyword):
+    video_ids = search_youtube_videos(keyword, max_results=1)
+    if video_ids:
+        video_id = video_ids[0]
+        return get_transcript(video_id)
+    return ""
+
+def getResponse(output, transcript):
     if output == "flashcard":
-        response = chatWithGroq(flashcard_prompt, final_transcript)
+        response = chatWithGroq(flashcard_prompt, transcript)
     elif output == "bullet_point":
-        response = chatWithGroq(bullet_point_prompt, final_transcript)
+        response = chatWithGroq(bullet_point_prompt, transcript)
     else:
-        response = chatWithGroq(quick_read_prompt, final_transcript)
-    return response
-
-def process_keyword(keyword, output_type):
-    transcripts = get_transcripts_for_keyword(keyword)
-    combined_transcript = " ".join(transcripts.values())
-    response = getResponse(output_type, combined_transcript)
+        response = chatWithGroq(quick_read_prompt, transcript)
     return response
 
 if __name__ == "__main__":
-    keyword = input("Enter a keyword to search for: ")
-    output_type = input("Enter output type (flashcard/bullet_point/quick_read): ")
+    # Accept JSON input
+    input_json = input("Enter JSON input: ")
+    input_data = json.loads(input_json)
     
-    result = process_keyword(keyword, output_type)
-    print(result)
+    keywords = input_data["words"]
+    output_type = input_data["output_type"]
+    
+    results = process_keywords(keywords, output_type)
+    
+    
+    

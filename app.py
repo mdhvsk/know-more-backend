@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from youtube import process_keyword  # Import the new function
+from youtube import process_keywords  # Import the new function
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -22,9 +22,9 @@ def hello():
 def echo():
     data = request.json
     print(data)
-    keyword = data['keyword']  
+    keyword = data['words']  
     output_type = data['output_type']
-    response = process_keyword(keyword, output_type)  
+    response = process_keywords(keyword, output_type)  
     return jsonify(response)
 
 # Run the Flask application
