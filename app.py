@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 from youtube import process_keyword  # Import the new function
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Define a route for the home page
 @app.route('/')

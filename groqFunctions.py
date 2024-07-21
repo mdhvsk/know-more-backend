@@ -9,29 +9,6 @@ client = Groq(
 )
 
 
-# def chatWithGroq(prompt, content):
-
-
-#     chat_completion = client.chat.completions.create(
-#         messages=[
-#             {
-#                 "role": "user",
-#                 "content": prompt + content,
-#             }
-#         ],
-#         model="llama3-8b-8192",
-#     )
-#     chat_output = chat_completion.choices[0].message.content
-#     print(type(chat_output))
-
-#     print(chat_output)
-
-#     start_pos = chat_output.find("{")
-#     response = json.loads(chat_output[start_pos:])
-#     print(type(response))
-#     print(response)
-    
-
 
 def chatWithGroq(prompt, content):
     while True:
