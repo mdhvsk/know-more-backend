@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from youtube_transcript import getTranscript, getResponse
+from youtube import process_keyword  # Import the new function
+
 app = Flask(__name__)
 
 # Define a route for the home page
@@ -18,10 +19,9 @@ def hello():
 def echo():
     data = request.json
     print(data)
-    url = data['youtube_link']
+    keyword = data['keyword']  
     output_type = data['output_type']
-    transcript = getTranscript(url)
-    response = getResponse(output_type, transcript)
+    response = process_keyword(keyword, output_type)  
     return jsonify(response)
 
 # Run the Flask application
