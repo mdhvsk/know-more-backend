@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from youtube import process_keywords  # Import the new function
 from flask_cors import CORS
+from groqFunctions import getKeywordsWithOpenAi
 
 app = Flask(__name__)
 
@@ -26,6 +27,14 @@ def echo():
     output_type = data['output_type']
     response = process_keywords(keyword, output_type)  
     return jsonify(response)
+
+@app.route('/friends/keywords/openai', methods=['POST'])
+def fetch_keywords_openai():
+    data = request.json
+    print(type(data))
+    overview = data["structured"]["overview"]
+    response = getKeywordsWithOpenAi(overview)
+    return response
 
 # Run the Flask application
 if __name__ == '__main__':
